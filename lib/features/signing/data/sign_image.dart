@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-class SignImage {
+import 'package:equatable/equatable.dart';
+
+class SignImage extends Equatable {
   SignImage({
     required this.bytes,
     required this.widgetSize,
@@ -26,4 +28,7 @@ class SignImage {
       isAsset: isAsset ?? this.isAsset,
     );
   }
+
+  @override
+  List<Object?> get props => [bytes, widgetSize, offset, isAsset];
 }

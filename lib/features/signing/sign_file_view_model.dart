@@ -1,29 +1,32 @@
 import 'package:easy_signature/common/helpers/app_file_manager.dart';
+import 'package:easy_signature/core/widgets/base_cubit.dart';
+import 'package:easy_signature/core/widgets/base_data_holder.dart';
+import 'package:easy_signature/core/widgets/base_state.dart';
+import 'package:easy_signature/core/widgets/png_save_widget.dart';
 import 'package:easy_signature/features/signing/data/sign_image.dart';
 import 'package:easy_signature/features/signing/data/signable_file.dart';
 import 'package:easy_signature/features/signing/pdf/app_pdf_document.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SignFileViewModel extends Cubit<SignFileViewDataHolder> {
-  SignFileViewModel({required this.appFileManager}) : super(SignFileViewDataHolder());
+class SignFileViewModel extends BaseCubit<SignFileViewDataHolder> {
+  SignFileViewModel({required this.appFileManager}) : super(const SignFileViewDataHolder());
 
   final AppFileManager appFileManager;
 
   void setSignableFile(SignableFile? file) {
-    emit(state.copyWith(pickedFile: file));
+    updateState(state.copyWith(pickedFile: file));
   }
 
   void updateSignImageOffset(Offset pos) {
-    emit(state.copyWith(signImage: state.signImage?.copyWith(offset: pos)));
+    updateState(state.copyWith(signImage: state.signImage?.copyWith(offset: pos)));
   }
 
   void updatePdfDocWidgetSize(Size widgetSize) {
-    emit(state.copyWith(pdfDocument: state.pdfDocument!.copyWith(widgetSize: widgetSize)));
+    updateState(state.copyWith(pdfDocument: state.pdfDocument!.copyWith(widgetSize: widgetSize)));
   }
 
   void updatePdfSignablePageIndex(int page) {
-    emit(state.copyWith(pdfDocument: state.pdfDocument!.copyWith(currentPageIndex: page)));
+    updateState(state.copyWith(pdfDocument: state.pdfDocument!.copyWith(currentPageIndex: page)));
   }
 
   Future<void> initFileCanvas(Size targetSize) async {
@@ -33,19 +36,23 @@ class SignFileViewModel extends Cubit<SignFileViewDataHolder> {
       case SignableFileExtension.pdf:
         final filePath = state.pickedFile!.filePath!;
         final pdfDoc = await appFileManager.readPdfDocument(filePath, targetSize);
-        emit(state.copyWith(pdfDocument: pdfDoc));
-      default:
+        updateState(state.copyWith(pdfDocument: pdfDoc));
+      case SignableFileExtension.jpg:
+      case SignableFileExtension.png:
+        return;
     }
   }
 
-  Future<void> initSignImage(String path, Size widgetSize, BuildContext context, {bool isAsset = true}) async {
-    if (isAsset) {
-      final byteData = await DefaultAssetBundle.of(context).load(path);
-      final signImage = SignImage(bytes: byteData.buffer.asUint8List(), widgetSize: widgetSize);
-      emit(state.copyWith(signImage: signImage));
-      return;
-    }
-    throw UnimplementedError('Non asset sign image does not implemented');
+  void initSignImage(SignImage? signImage, Size widgetSize) {
+    updateState(
+      state.copyWith(
+        signImage: signImage?.copyWith(widgetSize: widgetSize),
+      ),
+    );
+  }
+
+  void clear() {
+    updateState(const SignFileViewDataHolder());
   }
 
   Future<void> _drawSignatureOverPdf() async {
@@ -61,7 +68,7 @@ class SignFileViewModel extends Cubit<SignFileViewDataHolder> {
     );
   }
 
-  Future<String?> saveFile() async {
+  Future<String?> saveFile(GlobalKey<PngSaveWidgetState> fileKey) async {
     if (state.pickedFile == null) {
       throw Exception('pickedFile cannot be null');
     }
@@ -80,18 +87,29 @@ class SignFileViewModel extends Cubit<SignFileViewDataHolder> {
         return savedFilePath;
       case SignableFileExtension.png:
       case SignableFileExtension.jpg:
-        throw UnimplementedError('png and jpg files not supported');
+        final imageByte = await fileKey.currentState!.capturePng();
+        final signableFile = SignableFile(
+          bytes: imageByte,
+          filePath: state.pickedFile!.filePath,
+          signableFileExtension: SignableFileExtension.fromString(appFileManager.getFileExtFromPath(state.pickedFile!.filePath!)),
+          defaultSize: fileKey.currentState!.widgetSize(),
+        );
+        final savedFilePath = await appFileManager.saveFile(signableFile);
+        emit(state.copyWith(pickedFile: signableFile));
+        return savedFilePath;
     }
   }
 }
 
-class SignFileViewDataHolder {
-  SignFileViewDataHolder({this.pickedFile, this.pdfDocument, this.signImage});
+class SignFileViewDataHolder extends BaseState {
+  const SignFileViewDataHolder({this.pickedFile, this.pdfDocument, this.signImage}) : super(baseDataHolder: const BaseDataHolder());
   final SignableFile? pickedFile;
   final AppPdfDocument? pdfDocument;
   final SignImage? signImage;
 
+  @override
   SignFileViewDataHolder copyWith({
+    BaseDataHolder? baseDataHolder,
     SignableFile? pickedFile,
     AppPdfDocument? pdfDocument,
     SignImage? signImage,
@@ -102,4 +120,7 @@ class SignFileViewDataHolder {
       signImage: signImage ?? this.signImage,
     );
   }
+
+  @override
+  List<Object?> get props => [baseDataHolder, pickedFile, pdfDocument, signImage];
 }

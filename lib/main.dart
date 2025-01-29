@@ -7,7 +7,8 @@ import 'package:easy_signature/core/enums/route_enum.dart';
 import 'package:easy_signature/core/navigation/app_navigator.dart';
 import 'package:easy_signature/core/util/app_sizer.dart';
 import 'package:easy_signature/core/widgets/base_statefull_widget.dart';
-import 'package:easy_signature/features/load_files/load_file_view_model.dart';
+import 'package:easy_signature/features/create_sign/viewmodel/create_sign_view_model.dart';
+import 'package:easy_signature/features/load_files/viewmodel/load_file_view_model.dart';
 import 'package:easy_signature/features/signing/sign_file_view_model.dart';
 import 'package:easy_signature/locator.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => SignFileViewModel(
             appFileManager: getIt<AppFileManager>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => CreateSignViewModel(
+            fileManager: getIt<AppFileManager>(),
           ),
         ),
       ],

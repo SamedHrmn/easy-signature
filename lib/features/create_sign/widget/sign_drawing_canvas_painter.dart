@@ -2,38 +2,33 @@ import 'package:flutter/material.dart';
 
 class SignDrawingCanvasPainter extends CustomPainter {
   SignDrawingCanvasPainter({
-    required this.points,
+    required this.paths,
     required this.color,
     required this.strokeWidth,
     super.repaint,
   });
-  final List<Offset> points;
+  final List<Path> paths;
+
   final Color color;
   final double strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (paths.isEmpty) return;
+
     final paint = Paint()
       ..color = color
       ..strokeCap = StrokeCap.round
-      ..isAntiAlias = true
+      ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
 
-    final path = Path()..moveTo(points.first.dx, points.first.dy);
-
-    for (var i = 1; i < points.length - 1; i++) {
-      final mid = calculateMidPoint(points[i - 1], points[i]);
-      final control = points[i - 1];
-      path.quadraticBezierTo(control.dx, control.dy, mid.dx, mid.dy);
+    for (final path in paths) {
+      canvas.drawPath(path, paint);
     }
-
-    canvas.drawPath(path, paint);
   }
-
-  Offset calculateMidPoint(Offset p1, Offset p2) => Offset((p1.dx + p2.dx) / 2, (p1.dy + p2.dy) / 2);
 
   @override
   bool shouldRepaint(covariant SignDrawingCanvasPainter oldDelegate) {
-    return oldDelegate.points != points || oldDelegate.strokeWidth != strokeWidth || oldDelegate.color != color;
+    return oldDelegate.paths != paths || oldDelegate.strokeWidth != strokeWidth || oldDelegate.color != color;
   }
 }

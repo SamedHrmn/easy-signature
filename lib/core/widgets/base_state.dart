@@ -7,9 +7,6 @@ abstract class BaseState extends Equatable {
   });
   final BaseDataHolder baseDataHolder;
 
-  @override
-  List<Object?> get props => [baseDataHolder];
-
   BaseState copyWith({
     BaseDataHolder? baseDataHolder,
   });

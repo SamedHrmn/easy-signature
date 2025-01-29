@@ -35,13 +35,16 @@ enum SignableFileExtension {
   jpg,
   pdf;
 
-  static SignableFileExtension? getSignableFileExtension(String? path) {
-    if (path == null) return null;
-
-    if (path.endsWith('.pdf')) return SignableFileExtension.pdf;
-    if (path.endsWith('.png')) return SignableFileExtension.png;
-    if (path.endsWith('.jpg')) return SignableFileExtension.jpg;
-
-    return null;
+  static SignableFileExtension? fromString(String ext) {
+    switch (ext) {
+      case 'png':
+        return SignableFileExtension.png;
+      case 'jpg':
+        return SignableFileExtension.jpg;
+      case 'pdf':
+        return SignableFileExtension.pdf;
+      default:
+        return null;
+    }
   }
 }

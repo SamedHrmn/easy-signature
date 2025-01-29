@@ -2,6 +2,21 @@
     "pickYourSign": "Pick sign",
     "drawYourSign": "Draw sign",
     "pickFile": "Pick file",
-    "goSigning": "Go to sign placement",
-    "yourSign": "Your sign"
+    "goSigning": "Now you can go to sign placement",
+    "yourSign": "Your sign",
+    "createSign": "Create sign",
+    "signFile": "Sign file",
+    "tapToPlaceSign": "Tap to file place your sign",
+    "fileSavedSuccess": "Signature added and saved to {}",
+    "pickOrDrawSignToContinue": "Pick or draw a sign to continue",
+    "save": "Save",
+    "needPermissionForContinue": "Need storage permission for continue",
+    "openSettings": "Open settings",
+    "easySignature": "Easy Signature",
+    "okay": "Okay",
+    "somethingWentWrong": "Something went wrong",
+    "actionMenu": {
+        "privacyPolicy": "Privacy Policy",
+        "licences": "Licences"
+    }
 }

@@ -2,6 +2,21 @@
     "pickYourSign": "İmza seç",
     "drawYourSign": "Yeni imza çiz",
     "pickFile": "Dosya seç",
-    "goSigning": "İmza yerleştirmeye git",
-    "yourSign": "Seçtiğiniz imza"
+    "goSigning": "İmza hazır, yerleştirmeye gidebilirsiniz",
+    "yourSign": "Seçtiğiniz imza",
+    "createSign": "İmza oluştur",
+    "signFile": "Belge imzala",
+    "tapToPlaceSign": "İmza yerleştirmek için belgeye dokunun",
+    "fileSavedSuccess": "İmzalı dosya şu konuma kaydedildi {}",
+    "pickOrDrawSignToContinue": "Devam etmek için bir imza seçin veya çizin",
+    "save": "Kaydet",
+    "needPermissionForContinue": "Devam etmek için depolama izni gerekli",
+    "openSettings": "Ayarlar'a git",
+    "easySignature": "Easy Signature",
+    "okay": "Tamam",
+    "somethingWentWrong": "Bir hata oluştu",
+    "actionMenu": {
+        "privacyPolicy": "Gizlilik Politikası",
+        "licences": "Lisanslar"
+    }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:downloadsfolder/downloadsfolder.dart';
 import 'package:easy_signature/common/helpers/app_permission_manager.dart';
 import 'package:easy_signature/features/signing/data/signable_file.dart';
 import 'package:easy_signature/features/signing/pdf/app_pdf_document.dart';
@@ -22,48 +23,76 @@ final class AppFileManager {
   }
 
   Future<FilePickerResult?> pickSignImage() async {
-    return FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'png']);
+    return FilePicker.platform.pickFiles(compressionQuality: 80, type: FileType.custom, allowedExtensions: ['jpg', 'png']);
   }
 
-  Future<String> _createDestinationPath(String originalPath, String ext) async {
-    var editedPath = originalPath.substring(originalPath.lastIndexOf('/') + 1);
+  String getFileExtFromPath(String path) => path.split('.').last;
+
+  String getFileNameFromPath(String path) => path.substring(path.lastIndexOf('/') + 1);
+
+  Future<String> _createDestinationPath(String originalPath, String ext, {String? fileName}) async {
+    var editedPath = getFileNameFromPath(originalPath);
 
     switch (ext) {
       case 'pdf':
-        editedPath = editedPath.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '_signed.pdf');
+        editedPath = editedPath.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), fileName ?? '_signed.pdf');
       case 'png':
-        editedPath = editedPath.replaceFirst(RegExp(r'\.png$', caseSensitive: false), '_signed.png');
+        editedPath = editedPath.replaceFirst(RegExp(r'\.png$', caseSensitive: false), fileName ?? '_signed.png');
       case 'jpg':
-        editedPath = editedPath.replaceFirst(RegExp(r'\.jpg$', caseSensitive: false), '_signed.jpg');
+        editedPath = editedPath.replaceFirst(RegExp(r'\.jpg$', caseSensitive: false), fileName ?? '_signed.jpg');
     }
 
-    return appDeviceManager.platformOperationHandler<String>(
-      belowSDK33: () async {
-        final externalFileDir = await getExternalStorageDirectory();
-
-        return '${externalFileDir!.path}/$editedPath';
-      },
-      aboveSDK33: () async {
-        return editedPath;
-      },
-      onIOS: () async {
-        final docFileDir = await getApplicationDocumentsDirectory();
-        return '${docFileDir.path}/$editedPath';
-      },
-      noneOfThem: () async {
-        return editedPath;
-      },
-    );
+    final docDir = await getApplicationDocumentsDirectory();
+    return '${docDir.path}/$editedPath';
   }
 
-  Future<String> saveFile(SignableFile signableFile) async {
+  Future<String?> saveByteDataToFile(Uint8List bytes, {String? fileName}) async {
+    final formattedFileName = '${fileName ?? '${DateTime.now().millisecondsSinceEpoch}'}.png';
+
+    final docDir = await getApplicationDocumentsDirectory();
+
+    final fullPath = '${docDir.path}/$formattedFileName';
+
+    final file = File(fullPath);
+    await file.writeAsBytes(bytes);
+
+    await copyFileIntoDownloads(
+      destinationPath: fullPath,
+      fileName: getFileNameFromPath(fullPath),
+      ext: getFileExtFromPath(fullPath),
+    );
+    await file.delete();
+
+    return file.path;
+  }
+
+  Future<String?> saveFile(SignableFile signableFile) async {
     if (!signableFile.hasData()) {
       throw Exception('SignableFile has no data $signableFile');
     }
 
     final destinationPath = await _createDestinationPath(signableFile.filePath!, signableFile.signableFileExtension!.name);
-    final savedFile = await File(destinationPath).writeAsBytes(signableFile.bytes!);
-    return savedFile.path;
+    final savedFile = File(destinationPath);
+    await savedFile.writeAsBytes(signableFile.bytes!);
+
+    final isSuccess = await copyFileIntoDownloads(
+      destinationPath: savedFile.path,
+      fileName: getFileNameFromPath(savedFile.path),
+      ext: signableFile.signableFileExtension!.name,
+    );
+
+    await savedFile.delete();
+
+    return isSuccess ? destinationPath : null;
+  }
+
+  Future<bool> copyFileIntoDownloads({
+    required String destinationPath,
+    required String fileName,
+    required String ext,
+  }) async {
+    final isSuccess = (await copyFileIntoDownloadFolder(destinationPath, fileName, desiredExtension: ext)) ?? false;
+    return isSuccess;
   }
 
   Future<AppPdfDocument> readPdfDocument(String path, Size targetPageSize) async {
