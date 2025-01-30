@@ -1,8 +1,10 @@
+import 'package:easy_signature/common/widgets/app_ads_interstitial.dart';
 import 'package:easy_signature/core/widgets/base_data_holder.dart';
 import 'package:easy_signature/core/widgets/base_state.dart';
 import 'package:easy_signature/features/signing/data/sign_image.dart';
 import 'package:easy_signature/features/signing/data/signable_file.dart';
 import 'package:easy_signature/features/signing/pdf/app_pdf_document.dart';
+import 'package:flutter/material.dart';
 
 class LoadFileViewDataHolder extends BaseState {
   const LoadFileViewDataHolder({
@@ -11,12 +13,14 @@ class LoadFileViewDataHolder extends BaseState {
     this.pickedFileReady = false,
     this.pdfDocument,
     this.signImage,
+    this.interstitalWidgetKey,
   }) : super(baseDataHolder: const BaseDataHolder());
   final AppStoragePermissionStatus appStoragePermissionStatus;
   final SignableFile? pickedFile;
   final AppPdfDocument? pdfDocument;
   final SignImage? signImage;
   final bool pickedFileReady;
+  final GlobalKey<AppAdsInterstitialState>? interstitalWidgetKey;
 
   @override
   LoadFileViewDataHolder copyWith({
@@ -26,6 +30,7 @@ class LoadFileViewDataHolder extends BaseState {
     bool? pickedFileReady,
     AppPdfDocument? appPdfDocument,
     SignImage? signImage,
+    GlobalKey<AppAdsInterstitialState>? interstitalWidgetKey,
   }) {
     return LoadFileViewDataHolder(
       appStoragePermissionStatus: appStoragePermissionStatus ?? this.appStoragePermissionStatus,
@@ -33,6 +38,7 @@ class LoadFileViewDataHolder extends BaseState {
       pickedFileReady: pickedFileReady ?? this.pickedFileReady,
       pdfDocument: appPdfDocument ?? pdfDocument,
       signImage: signImage ?? this.signImage,
+      interstitalWidgetKey: interstitalWidgetKey ?? this.interstitalWidgetKey,
     );
   }
 
@@ -44,6 +50,7 @@ class LoadFileViewDataHolder extends BaseState {
         pickedFileReady,
         pdfDocument,
         signImage,
+        interstitalWidgetKey,
       ];
 }
 

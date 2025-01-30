@@ -50,11 +50,18 @@ dependencies:
   lottie: ^3.3.1
   downloadsfolder: ^1.2.0
   flutter_markdown: ^0.7.5
+  google_mobile_ads: ^5.3.1
+  flutter_dotenv: ^5.2.1
+  package_info_plus: ^8.1.4
+  flutter_native_splash: ^2.4.4
+  
   
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: ^0.14.3  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -81,6 +88,11 @@ flutter:
     - assets/fonts/
     - assets/lottie/
     - assets/icons/
+    - .env.development
+    - .env.production
+    - assets/ic_launcher.png
+    - assets/splash_icon.png
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

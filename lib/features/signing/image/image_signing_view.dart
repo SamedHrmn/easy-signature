@@ -15,10 +15,6 @@ class _ImageSigningViewState extends BaseStatefullWidget<ImageSigningView> {
   Widget build(BuildContext context) {
     final uiState = context.watch<SignFileViewModel>().state;
 
-    return Container(
-      width: double.maxFinite,
-      color: Colors.grey,
-      child: Image.memory(uiState.pickedFile!.bytes!),
-    );
+    return Image.memory(uiState.pickedFile!.bytes!);
   }
 }

@@ -1,6 +1,9 @@
 import 'dart:typed_data';
 import 'package:alh_pdf_view/alh_pdf_view.dart';
 import 'package:easy_signature/common/helpers/app_asset_manager.dart';
+import 'package:easy_signature/common/helpers/app_initializer.dart';
+import 'package:easy_signature/common/widgets/app_ads_banner.dart';
+import 'package:easy_signature/common/widgets/app_ads_interstitial.dart';
 import 'package:easy_signature/common/widgets/app_lottie_asset.dart';
 import 'package:easy_signature/common/widgets/app_scaffold.dart';
 import 'package:easy_signature/common/widgets/app_snackbar.dart';
@@ -9,8 +12,11 @@ import 'package:easy_signature/core/constant/color_constant.dart';
 import 'package:easy_signature/core/enums/app_localized_keys.dart';
 import 'package:easy_signature/core/enums/route_enum.dart';
 import 'package:easy_signature/core/navigation/app_navigator.dart';
+import 'package:easy_signature/core/util/app_env_manager.dart';
 import 'package:easy_signature/core/util/app_sizer.dart';
 import 'package:easy_signature/core/widgets/base_statefull_widget.dart';
+import 'package:easy_signature/features/ads/app_ads_manager.dart';
+
 import 'package:easy_signature/features/create_sign/viewmodel/create_sign_view_model.dart';
 import 'package:easy_signature/features/create_sign/viewmodel/create_sign_view_state.dart';
 import 'package:easy_signature/features/load_files/viewmodel/load_file_view_action.dart';
@@ -32,6 +38,8 @@ class LoadFileView extends StatefulWidget {
 
 class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
   late final Size signSize;
+  final bannerAdSize = AppBannerAdSize.normal;
+  final interstitalWidgetKey = GlobalKey<AppAdsInterstitialState>();
 
   @override
   void onInit() {
@@ -40,7 +48,10 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
 
   @override
   Future<void> onInitAsync() async {
+    AppInitializer.removeSplash();
+    context.read<LoadFileViewModel>().setInterstitalWidgetKey(interstitalWidgetKey);
     await context.read<LoadFileViewModel>().askStoragePermissionIfNeeded();
+    return super.onInitAsync();
   }
 
   bool isPermissionDenied(LoadFileViewDataHolder uiState) => uiState.appStoragePermissionStatus == AppStoragePermissionStatus.requestedAndDenied;
@@ -63,35 +74,57 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
 
     return AppScaffold(
       canPop: false,
-      topbarTitle: AppLocalizedKeys.easySignature,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (uiState.pickedFileReady) ...{
-              Expanded(
-                child: pickedFileReadyColumn(context, uiState),
-              ),
-            } else ...{
-              Expanded(
-                child: pickedFileLayout(context),
-              ),
-            },
-            Expanded(
-              child: Row(
-                children: [
+      topbarTitle: AppLocalizedKeys.appName,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (uiState.pickedFileReady) ...{
                   Expanded(
-                    child: pickYourSignBuilder(uiState),
+                    child: pickedFileReadyColumn(context, uiState),
                   ),
+                } else ...{
                   Expanded(
-                    child: createSignLayout(),
+                    child: pickedFileLayout(context),
                   ),
-                ],
-              ),
+                },
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: pickYourSignBuilder(uiState),
+                      ),
+                      Expanded(
+                        child: createSignLayout(),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: bannerAdSize.toAdSize().height.truncateToDouble(),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: AppAdsBanner(
+              adUnitId: getIt<AppEnvManager>().getString(AppEnvKey.adsBannerNormal),
+              adSize: bannerAdSize,
+            ),
+          ),
+          Positioned.fill(
+            child: AppAdsInterstitial(
+              key: interstitalWidgetKey,
+              adUnitId: getIt<AppEnvManager>().getString(AppEnvKey.adsInterstitial),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -240,6 +273,7 @@ class PickedFilePreview extends StatelessWidget {
 
       case SignableFileExtension.png:
       case SignableFileExtension.jpg:
+      case SignableFileExtension.jpeg:
         return Image.memory(pickedFile.bytes!);
     }
   }

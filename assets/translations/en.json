@@ -12,9 +12,10 @@
     "save": "Save",
     "needPermissionForContinue": "Need storage permission for continue",
     "openSettings": "Open settings",
-    "easySignature": "Easy Signature",
+    "appName": "Easy Signature",
     "okay": "Okay",
     "somethingWentWrong": "Something went wrong",
+    "adsLoadFailed": "Failed to load ads. It will retrying.",
     "actionMenu": {
         "privacyPolicy": "Privacy Policy",
         "licences": "Licences"

@@ -14,11 +14,12 @@ enum AppLocalizedKeys {
   pickOrDrawSignToContinue,
   needPermissionForContinue,
   openSettings,
-  easySignature,
+  appName,
   actionMenuPrivacyPolicy,
   actionMenuLicences,
   okay,
   somethingWentWrong,
+  adsLoadFailed,
   goSigning;
 
   String toLocalized(BuildContext context, {List<String>? args}) {
@@ -36,9 +37,10 @@ enum AppLocalizedKeys {
       case AppLocalizedKeys.pickOrDrawSignToContinue:
       case AppLocalizedKeys.needPermissionForContinue:
       case AppLocalizedKeys.openSettings:
-      case AppLocalizedKeys.easySignature:
+      case AppLocalizedKeys.appName:
       case AppLocalizedKeys.okay:
       case AppLocalizedKeys.somethingWentWrong:
+      case AppLocalizedKeys.adsLoadFailed:
         return name.tr(context: context, args: args);
       case AppLocalizedKeys.actionMenuPrivacyPolicy:
         return 'actionMenu.privacyPolicy'.tr(context: context, args: args);

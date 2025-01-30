@@ -39,6 +39,7 @@ class SignFileViewModel extends BaseCubit<SignFileViewDataHolder> {
         updateState(state.copyWith(pdfDocument: pdfDoc));
       case SignableFileExtension.jpg:
       case SignableFileExtension.png:
+      case SignableFileExtension.jpeg:
         return;
     }
   }
@@ -87,7 +88,8 @@ class SignFileViewModel extends BaseCubit<SignFileViewDataHolder> {
         return savedFilePath;
       case SignableFileExtension.png:
       case SignableFileExtension.jpg:
-        final imageByte = await fileKey.currentState!.capturePng();
+      case SignableFileExtension.jpeg:
+        final imageByte = await fileKey.currentState!.capturePng(defaultImageSize: state.pickedFile!.defaultSize);
         final signableFile = SignableFile(
           bytes: imageByte,
           filePath: state.pickedFile!.filePath,

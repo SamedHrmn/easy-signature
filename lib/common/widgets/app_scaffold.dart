@@ -1,3 +1,4 @@
+import 'package:easy_signature/common/helpers/app_package_manager.dart';
 import 'package:easy_signature/common/widgets/app_privacy_policy_sheet.dart';
 import 'package:easy_signature/common/widgets/app_text.dart';
 import 'package:easy_signature/common/widgets/app_topbar.dart';
@@ -9,10 +10,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppScaffold extends StatelessWidget {
-  const AppScaffold({required this.topbarTitle, this.canPop = true, super.key, this.child});
+  const AppScaffold({
+    required this.topbarTitle,
+    this.canPop = true,
+    this.onBack,
+    super.key,
+    this.child,
+  });
   final Widget? child;
   final AppLocalizedKeys topbarTitle;
   final bool canPop;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +29,7 @@ class AppScaffold extends StatelessWidget {
       child: Scaffold(
         appBar: AppTopbar(
           title: topbarTitle,
+          onBack: onBack,
           canPop: canPop,
           actions: [
             AppTopBarActionButton(
@@ -91,7 +100,17 @@ enum AppTopBarActions {
 
       case AppTopBarActions.licences:
         return () async {
-          print('sa');
+          final appVer = await getIt<AppPackageManager>().getAppVersion();
+          final appName = await getIt<AppPackageManager>().getAppName();
+          final context = getIt<AppNavigator>().navigatorKey.currentContext!;
+
+          if (!context.mounted) return;
+
+          showLicensePage(
+            context: context,
+            applicationName: appName,
+            applicationVersion: appVer,
+          );
         };
     }
   }

@@ -1,3 +1,4 @@
+import 'package:alh_pdf_view/alh_pdf_view.dart';
 import 'package:easy_signature/common/widgets/app_loader_overlay.dart';
 import 'package:easy_signature/common/widgets/app_scaffold.dart';
 import 'package:easy_signature/common/widgets/app_snackbar.dart';
@@ -12,6 +13,7 @@ import 'package:easy_signature/features/load_files/load_file_view.dart';
 import 'package:easy_signature/features/load_files/viewmodel/load_file_view_model.dart';
 import 'package:easy_signature/features/signing/data/signable_file.dart';
 import 'package:easy_signature/features/signing/image/image_signing_view.dart';
+import 'package:easy_signature/features/signing/pdf/pdf_controller_butons.dart';
 import 'package:easy_signature/features/signing/pdf/pdf_signing_view.dart';
 import 'package:easy_signature/features/signing/sign_file_view_model.dart';
 import 'package:easy_signature/locator.dart';
@@ -28,6 +30,7 @@ class SignFileView extends StatefulWidget {
 class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
   late final Size signImageSize;
   final GlobalKey<PngSaveWidgetState> signedFileKey = GlobalKey();
+  final ValueNotifier<AlhPdfViewController?> pdfControllerNotifier = ValueNotifier(null);
 
   @override
   void onInit() {
@@ -50,8 +53,14 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
         return uiState.signImage == null || uiState.pickedFile == null || uiState.pdfDocument == null;
       case SignableFileExtension.png:
       case SignableFileExtension.jpg:
+      case SignableFileExtension.jpeg:
         return uiState.signImage == null || uiState.pickedFile == null;
     }
+  }
+
+  void showInterstitialAd() {
+    final globalContext = getIt<AppNavigator>().navigatorKey.currentContext!;
+    globalContext.read<LoadFileViewModel>().showInterstitialAd();
   }
 
   @override
@@ -60,6 +69,10 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
 
     return AppScaffold(
       topbarTitle: AppLocalizedKeys.signFile,
+      onBack: () {
+        showInterstitialAd();
+        getIt<AppNavigator>().goBack(context);
+      },
       child: AppLoaderOverlay(
         loading: filesReady(uiState),
         child: Column(
@@ -95,9 +108,14 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
                                 );
                           },
                           child: switch (uiState.pickedFile!.signableFileExtension!) {
-                            SignableFileExtension.pdf => const PdfSigningView(),
+                            SignableFileExtension.pdf => PdfSigningView(
+                                onViewReady: (controller) {
+                                  pdfControllerNotifier.value = controller;
+                                },
+                              ),
                             SignableFileExtension.jpg => const ImageSigningView(),
                             SignableFileExtension.png => const ImageSigningView(),
+                            SignableFileExtension.jpeg => const ImageSigningView(),
                           },
                         ),
                       ),
@@ -132,10 +150,16 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSizer.scaleHeight(24)),
-                child: ElevatedButton(
-                  onPressed: onSave,
-                  child: const AppText(AppLocalizedKeys.save),
+                padding: EdgeInsets.symmetric(vertical: AppSizer.scaleHeight(16)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: onSave,
+                      child: const AppText(AppLocalizedKeys.save),
+                    ),
+                    PdfControllerButons(pdfControllerNotifier: pdfControllerNotifier),
+                  ],
                 ),
               ),
             },
@@ -147,6 +171,10 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
 
   Future<void> onSave() async {
     final globalContext = getIt<AppNavigator>().navigatorKey.currentContext!;
+
+    //Show fullscreen ads
+    globalContext.read<LoadFileViewModel>().showInterstitialAd();
+
     final newPath = await globalContext.read<SignFileViewModel>().saveFile(signedFileKey);
 
     if (globalContext.mounted && newPath != null) {

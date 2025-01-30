@@ -12,9 +12,10 @@
     "save": "Kaydet",
     "needPermissionForContinue": "Devam etmek için depolama izni gerekli",
     "openSettings": "Ayarlar'a git",
-    "easySignature": "Easy Signature",
+    "appName": "Belge İmzalayıcı",
     "okay": "Tamam",
     "somethingWentWrong": "Bir hata oluştu",
+    "adsLoadFailed": "Reklam yüklenemedi. Yeniden denenecek.",
     "actionMenu": {
         "privacyPolicy": "Gizlilik Politikası",
         "licences": "Lisanslar"

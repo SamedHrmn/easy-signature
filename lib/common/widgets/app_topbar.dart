@@ -4,16 +4,23 @@ import 'package:easy_signature/core/util/app_sizer.dart';
 import 'package:flutter/material.dart';
 
 class AppTopbar extends StatelessWidget implements PreferredSizeWidget {
-  const AppTopbar({required this.title, this.canPop = true, this.actions, super.key});
+  const AppTopbar({required this.title, this.onBack, this.canPop = true, this.actions, super.key});
 
   final AppLocalizedKeys title;
   final bool canPop;
+  final VoidCallback? onBack;
   final List<AppTopBarActionButton>? actions;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: canPop,
+      leading: canPop
+          ? InkWell(
+              onTap: onBack,
+              child: const Icon(Icons.arrow_back_ios_new),
+            )
+          : null,
       title: AppText(
         title,
         size: AppSizer.scaleWidth(20),

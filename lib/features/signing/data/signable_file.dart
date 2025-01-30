@@ -33,6 +33,7 @@ class SignableFile {
 enum SignableFileExtension {
   png,
   jpg,
+  jpeg,
   pdf;
 
   static SignableFileExtension? fromString(String ext) {
@@ -41,6 +42,8 @@ enum SignableFileExtension {
         return SignableFileExtension.png;
       case 'jpg':
         return SignableFileExtension.jpg;
+      case 'jpeg':
+        return SignableFileExtension.jpeg;
       case 'pdf':
         return SignableFileExtension.pdf;
       default:

@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:easy_signature/common/helpers/app_file_manager.dart';
 import 'package:easy_signature/common/helpers/app_permission_manager.dart';
+import 'package:easy_signature/common/widgets/app_ads_interstitial.dart';
 import 'package:easy_signature/core/widgets/base_cubit.dart';
+
 import 'package:easy_signature/features/load_files/viewmodel/load_file_view_action.dart';
 import 'package:easy_signature/features/load_files/viewmodel/load_file_view_state.dart';
 import 'package:easy_signature/features/signing/data/sign_image.dart';
@@ -22,6 +25,14 @@ class LoadFileViewModel extends BaseCubit<LoadFileViewDataHolder> {
 
   void updatePermissionStatus(AppStoragePermissionStatus newStatus) {
     updateState(state.copyWith(appStoragePermissionStatus: newStatus));
+  }
+
+  void setInterstitalWidgetKey(GlobalKey<AppAdsInterstitialState> interstitalWidgetKey) {
+    updateState(state.copyWith(interstitalWidgetKey: interstitalWidgetKey));
+  }
+
+  void showInterstitialAd() {
+    state.interstitalWidgetKey?.currentState?.showInterstitialAd();
   }
 
   Future<void> onAction(LoadFileViewAction action) async {
@@ -74,15 +85,21 @@ class LoadFileViewModel extends BaseCubit<LoadFileViewDataHolder> {
 
     if (fileExt == null) return;
 
+    final imageBytes = await File(platformFile.path!).readAsBytes();
+
     switch (fileExt) {
       case SignableFileExtension.pdf:
         defaultSize = await appFileManager.getPdfSize(platformFile.path!);
       case SignableFileExtension.png:
       case SignableFileExtension.jpg:
+      case SignableFileExtension.jpeg:
+        final codec = await instantiateImageCodec(imageBytes);
+        final frameInfo = await codec.getNextFrame();
+        defaultSize = Size(frameInfo.image.width.truncateToDouble(), frameInfo.image.height.truncateToDouble());
     }
 
     final pickedFile = SignableFile(
-      bytes: await File(platformFile.path!).readAsBytes(),
+      bytes: imageBytes,
       filePath: platformFile.path,
       defaultSize: defaultSize,
       signableFileExtension: fileExt,

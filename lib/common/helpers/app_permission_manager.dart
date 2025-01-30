@@ -18,12 +18,14 @@ final class AppPermissionManager {
     if (Platform.isAndroid) {
       final sdkIntAndroid = await appDeviceManager.getAndroidSdkInt();
       if (sdkIntAndroid < 33) {
-        final status = await Permission.storage.request();
-
-        if (status.isGranted) {
-          await onGranted?.call();
-        } else {
-          await onDenied?.call();
+        final isGranted = await Permission.storage.isGranted;
+        if (!isGranted) {
+          final status = await Permission.storage.request();
+          if (status.isGranted) {
+            await onGranted?.call();
+          } else {
+            await onDenied?.call();
+          }
         }
       } else {
         await aboveSdk33?.call();

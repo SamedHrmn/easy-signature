@@ -19,10 +19,21 @@ class PngSaveWidget extends StatefulWidget {
 class PngSaveWidgetState extends State<PngSaveWidget> {
   final repaintKey = GlobalKey();
 
-  Future<Uint8List> capturePng() async {
+  Future<Uint8List> capturePng({required Size? defaultImageSize}) async {
     final boundary = repaintKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
 
-    final image = await boundary.toImage();
+    // Get the actual widget size
+    final widgetSize = boundary.size;
+    final sourceImageSize = defaultImageSize ?? widgetSize;
+
+    // Compute the scaling factor
+    final scaleX = sourceImageSize.width / widgetSize.width;
+    final scaleY = sourceImageSize.height / widgetSize.height;
+
+    // Use the larger scale to maintain aspect ratio
+    final scale = scaleX > scaleY ? scaleX : scaleY;
+
+    final image = await boundary.toImage(pixelRatio: scale);
     final byteData = await image.toByteData(format: ImageByteFormat.png);
 
     final pngBytes = byteData!.buffer.asUint8List();

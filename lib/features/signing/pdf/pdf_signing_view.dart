@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PdfSigningView extends StatefulWidget {
-  const PdfSigningView({super.key});
+  const PdfSigningView({required this.onViewReady, super.key});
+
+  final void Function(AlhPdfViewController controller) onViewReady;
 
   @override
   State<PdfSigningView> createState() => _PdfSigningViewState();
@@ -42,6 +44,7 @@ class _PdfSigningViewState extends BaseStatefullWidget<PdfSigningView> {
         maxZoom: 1,
         minZoom: 1,
         filePath: uiState.pickedFile!.filePath,
+        onViewCreated: widget.onViewReady,
         onPageChanged: (page, total) {
           context.read<SignFileViewModel>().updatePdfSignablePageIndex(page);
         },
