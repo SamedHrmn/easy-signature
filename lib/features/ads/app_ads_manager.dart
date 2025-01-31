@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AppAdsManager {
@@ -5,7 +6,9 @@ class AppAdsManager {
     await MobileAds.instance.initialize();
     await MobileAds.instance.updateRequestConfiguration(
       RequestConfiguration(
-        testDeviceIds: ['2621974BED2946AACB8002CAA7E9E9DE'],
+        testDeviceIds: kDebugMode ? ['2621974BED2946AACB8002CAA7E9E9DE'] : null,
+        tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
+        maxAdContentRating: MaxAdContentRating.g,
       ),
     );
   }
