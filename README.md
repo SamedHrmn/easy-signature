@@ -1,16 +1,14 @@
-# easy_signature
+# Easy Signature
 
-A new Flutter project.
+Easy Signature is a tool for signing various files with digital sign. You can draw and place your sign over PDF, JPG and PNG files also save them. Free with ads and unlimited use made by Flutter.
 
-## Getting Started
+## Features:<br>
+* Load and preview various file types.<br>
+* Draw smooth signature and save as png.<br>
+* Place any image over your selected file and save them as one file.
+* Free with ads, banner and interstital ads supported.
 
-This project is a starting point for a Flutter application.
+## Screenshots
+<img src= "https://github.com/user-attachments/assets/4c914015-a36d-4985-ae09-1df942cec36c" width=200>
+<img src= "https://github.com/user-attachments/assets/1ab045b6-dedd-44c6-852d-22c81a8966fa" width=200>
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
