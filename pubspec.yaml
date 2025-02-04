@@ -49,7 +49,7 @@ dependencies:
   easy_localization: ^3.0.7
   lottie: ^3.3.1
   downloadsfolder: ^1.2.0
-  flutter_markdown: ^0.7.5
+  flutter_markdown: ^0.7.6
   google_mobile_ads: ^5.3.1
   flutter_dotenv: ^5.2.1
   package_info_plus: ^8.1.4
