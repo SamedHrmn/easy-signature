@@ -197,10 +197,10 @@ packages:
     dependency: "direct main"
     description:
       name: device_preview_plus
-      sha256: "206e2607cfe0755e070f0b49e25efeb0e9618ee9c9a7d0554f7761b24939f03f"
+      sha256: "5a43d6a76b6d05f7b428f245414a196fd16d7e3aba054d22c473337b04a21e36"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.3"
+    version: "2.2.6"
   diacritic:
     dependency: transitive
     description:
@@ -673,10 +673,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences
-      sha256: a752ce92ea7540fc35a0d19722816e04d0e72828a4200e83a98cf1a1eb524c9a
+      sha256: "688ee90fbfb6989c980254a56cb26ebe9bb30a3a2dff439a78894211f73de67a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.5"
+    version: "2.5.1"
   shared_preferences_android:
     dependency: transitive
     description:
