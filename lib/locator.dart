@@ -9,7 +9,7 @@ import 'package:easy_signature/features/ads/app_ads_manager.dart';
 import 'package:get_it/get_it.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 
-final getIt = GetIt.instance;
+final GetIt getIt = GetIt.instance;
 
 void setupLocator() {
   getIt
@@ -26,16 +26,25 @@ void setupLocator() {
         if (Platform.isAndroid) {
           final sdkInt = await getIt<AppDeviceManager>().getAndroidSdkInt();
           if (sdkInt < 33) {
-            return AppFileManager(appDeviceManager: getIt<AppDeviceManager>(), mediaStorePlugin: null);
+            return AppFileManager(
+              appDeviceManager: getIt<AppDeviceManager>(),
+              mediaStorePlugin: null,
+            );
           } else {
             final mediaStore = MediaStore();
             MediaStore.appFolder = 'EasySignature';
             await MediaStore.ensureInitialized();
 
-            return AppFileManager(appDeviceManager: getIt<AppDeviceManager>(), mediaStorePlugin: mediaStore);
+            return AppFileManager(
+              appDeviceManager: getIt<AppDeviceManager>(),
+              mediaStorePlugin: mediaStore,
+            );
           }
         }
-        return AppFileManager(appDeviceManager: getIt<AppDeviceManager>(), mediaStorePlugin: null);
+        return AppFileManager(
+          appDeviceManager: getIt<AppDeviceManager>(),
+          mediaStorePlugin: null,
+        );
       },
     );
 }

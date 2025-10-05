@@ -14,7 +14,9 @@ class PdfControllerButons extends StatelessWidget {
         return FutureBuilder(
           future: controller?.getPageCount(),
           builder: (context, snapshot) {
-            if (snapshot.data == null || snapshot.requireData == 1) return const SizedBox.shrink();
+            if (snapshot.data == null || snapshot.requireData == 1) {
+              return const SizedBox.shrink();
+            }
 
             return Column(
               children: [
@@ -39,13 +41,15 @@ class PdfControllerButons extends StatelessWidget {
                 FutureBuilder(
                   future: controller?.getCurrentPage(),
                   builder: (context, currentPageSnapshot) {
-                    if (currentPageSnapshot.data == null) return const SizedBox.shrink();
+                    if (currentPageSnapshot.data == null) {
+                      return const SizedBox.shrink();
+                    }
 
                     return Text(
                       '${currentPageSnapshot.requireData + 1}/${snapshot.requireData}',
                     );
                   },
-                )
+                ),
               ],
             );
           },

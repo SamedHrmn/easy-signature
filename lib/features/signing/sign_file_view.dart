@@ -30,7 +30,8 @@ class SignFileView extends StatefulWidget {
 class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
   late final Size signImageSize;
   final GlobalKey<PngSaveWidgetState> signedFileKey = GlobalKey();
-  final ValueNotifier<AlhPdfViewController?> pdfControllerNotifier = ValueNotifier(null);
+  final ValueNotifier<AlhPdfViewController?> pdfControllerNotifier =
+      ValueNotifier(null);
 
   @override
   void onInit() {
@@ -43,14 +44,16 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
     context.read<SignFileViewModel>().initSignImage(signImage, signImageSize);
   }
 
-  final signImageWidgetKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> signImageWidgetKey = GlobalKey();
 
   bool filesReady(SignFileViewDataHolder uiState) {
     switch (uiState.pickedFile?.signableFileExtension) {
       case null:
         return false;
       case SignableFileExtension.pdf:
-        return uiState.signImage == null || uiState.pickedFile == null || uiState.pdfDocument == null;
+        return uiState.signImage == null ||
+            uiState.pickedFile == null ||
+            uiState.pdfDocument == null;
       case SignableFileExtension.png:
       case SignableFileExtension.jpg:
       case SignableFileExtension.jpeg:
@@ -90,32 +93,60 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
                         bottom: 0,
                         child: GestureDetector(
                           onTapDown: (details) {
-                            if (context.read<SignFileViewModel>().state.signImage?.offset == Offset.zero) {
-                              context.read<SignFileViewModel>().updateSignImageOffset(
-                                    details.localPosition - Offset(signImageSize.width / 2, signImageSize.height / 2),
+                            if (context
+                                    .read<SignFileViewModel>()
+                                    .state
+                                    .signImage
+                                    ?.offset ==
+                                Offset.zero) {
+                              context
+                                  .read<SignFileViewModel>()
+                                  .updateSignImageOffset(
+                                    details.localPosition -
+                                        Offset(
+                                          signImageSize.width / 2,
+                                          signImageSize.height / 2,
+                                        ),
                                   );
                             }
                           },
                           onPanUpdate: (details) {
-                            final box = signedFileKey.currentContext!.findRenderObject()! as RenderBox;
-                            final localPosition = box.globalToLocal(details.globalPosition);
+                            final box = signedFileKey.currentContext!
+                                .findRenderObject()! as RenderBox;
+                            final localPosition =
+                                box.globalToLocal(details.globalPosition);
 
-                            final clampedX = localPosition.dx.clamp(0, box.size.width).toDouble();
-                            final clampedY = localPosition.dy.clamp(AppSizer.scaleHeight(48), box.size.height);
+                            final clampedX = localPosition.dx
+                                .clamp(0, box.size.width)
+                                .toDouble();
+                            final clampedY = localPosition.dy.clamp(
+                              AppSizer.scaleHeight(48),
+                              box.size.height,
+                            );
 
-                            context.read<SignFileViewModel>().updateSignImageOffset(
-                                  Offset(clampedX, clampedY) - Offset(signImageSize.width / 2, signImageSize.height / 2),
+                            context
+                                .read<SignFileViewModel>()
+                                .updateSignImageOffset(
+                                  Offset(clampedX, clampedY) -
+                                      Offset(
+                                        signImageSize.width / 2,
+                                        signImageSize.height / 2,
+                                      ),
                                 );
                           },
-                          child: switch (uiState.pickedFile!.signableFileExtension!) {
+                          child: switch (
+                              uiState.pickedFile!.signableFileExtension!) {
                             SignableFileExtension.pdf => PdfSigningView(
                                 onViewReady: (controller) {
                                   pdfControllerNotifier.value = controller;
                                 },
                               ),
-                            SignableFileExtension.jpg => const ImageSigningView(),
-                            SignableFileExtension.png => const ImageSigningView(),
-                            SignableFileExtension.jpeg => const ImageSigningView(),
+                            SignableFileExtension.jpg =>
+                              const ImageSigningView(),
+                            SignableFileExtension.png =>
+                              const ImageSigningView(),
+                            SignableFileExtension.jpeg =>
+                              const ImageSigningView(),
                           },
                         ),
                       ),
@@ -144,13 +175,14 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
                             ),
                           ),
                         ),
-                      }
+                      },
                     ],
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSizer.scaleHeight(16)),
+                padding:
+                    EdgeInsets.symmetric(vertical: AppSizer.scaleHeight(16)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -158,7 +190,9 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
                       onPressed: onSave,
                       child: const AppText(AppLocalizedKeys.save),
                     ),
-                    PdfControllerButons(pdfControllerNotifier: pdfControllerNotifier),
+                    PdfControllerButons(
+                      pdfControllerNotifier: pdfControllerNotifier,
+                    ),
                   ],
                 ),
               ),
@@ -175,7 +209,8 @@ class _SignFileViewState extends BaseStatefullWidget<SignFileView> {
     //Show fullscreen ads
     globalContext.read<LoadFileViewModel>().showInterstitialAd();
 
-    final newPath = await globalContext.read<SignFileViewModel>().saveFile(signedFileKey);
+    final newPath =
+        await globalContext.read<SignFileViewModel>().saveFile(signedFileKey);
 
     if (globalContext.mounted && newPath != null) {
       AppSnackbar.show(

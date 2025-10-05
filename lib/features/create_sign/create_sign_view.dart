@@ -25,7 +25,7 @@ class CreateSignView extends StatefulWidget {
 }
 
 class _CreateSignViewState extends BaseStatefullWidget<CreateSignView> {
-  final canvasKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> canvasKey = GlobalKey();
 
   void showInterstitialAd() {
     final globalContext = getIt<AppNavigator>().navigatorKey.currentContext!;
@@ -62,7 +62,8 @@ class _CreateSignViewState extends BaseStatefullWidget<CreateSignView> {
             right: 0,
             bottom: 0,
             child: AppAdsBanner(
-              adUnitId: getIt<AppEnvManager>().getString(AppEnvKey.adsBannerLarge),
+              adUnitId:
+                  getIt<AppEnvManager>().getString(AppEnvKey.adsBannerLarge),
               adSize: AppBannerAdSize.large,
             ),
           ),
@@ -71,7 +72,10 @@ class _CreateSignViewState extends BaseStatefullWidget<CreateSignView> {
     );
   }
 
-  Row colorOptionsRow(BuildContext context, SignDrawingCanvasDataHolder uiState) {
+  Row colorOptionsRow(
+    BuildContext context,
+    SignDrawingCanvasDataHolder uiState,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -80,14 +84,18 @@ class _CreateSignViewState extends BaseStatefullWidget<CreateSignView> {
                 .map(
                   (option) => GestureDetector(
                     onTap: () {
-                      context.read<CreateSignViewModel>().onAction(OnChangeColor(color: option));
+                      context
+                          .read<CreateSignViewModel>()
+                          .onAction(OnChangeColor(color: option));
                     },
                     child: AnimatedContainer(
                       duration: Durations.medium3,
                       decoration: BoxDecoration(
                         border: Border.all(
                           width: 2,
-                          color: option == uiState.selectedColor ? Colors.black : Colors.transparent,
+                          color: option == uiState.selectedColor
+                              ? Colors.black
+                              : Colors.transparent,
                         ),
                         shape: BoxShape.circle,
                       ),
@@ -124,7 +132,8 @@ class _CreateSignViewState extends BaseStatefullWidget<CreateSignView> {
         ),
         IconButton.outlined(
           onPressed: () {
-            final globalContext = getIt<AppNavigator>().navigatorKey.currentContext!;
+            final globalContext =
+                getIt<AppNavigator>().navigatorKey.currentContext!;
             showInterstitialAd();
 
             globalContext.read<CreateSignViewModel>().onAction(OnSaveRequest());
@@ -151,14 +160,19 @@ class _CreateSignViewState extends BaseStatefullWidget<CreateSignView> {
         builder: (context, constraints) {
           return GestureDetector(
             onPanStart: (details) {
-              context.read<CreateSignViewModel>().onAction(OnDrawingStart(point: details.localPosition));
+              context
+                  .read<CreateSignViewModel>()
+                  .onAction(OnDrawingStart(point: details.localPosition));
             },
             onPanUpdate: (details) {
-              final box = canvasKey.currentContext!.findRenderObject()! as RenderBox;
+              final box =
+                  canvasKey.currentContext!.findRenderObject()! as RenderBox;
               final localPosition = box.globalToLocal(details.globalPosition);
 
-              final clampedX = localPosition.dx.clamp(0, box.size.width).toDouble();
-              final clampedY = localPosition.dy.clamp(0, box.size.height).toDouble();
+              final clampedX =
+                  localPosition.dx.clamp(0, box.size.width).toDouble();
+              final clampedY =
+                  localPosition.dy.clamp(0, box.size.height).toDouble();
 
               context.read<CreateSignViewModel>().onAction(
                     OnDrawing(point: Offset(clampedX, clampedY)),

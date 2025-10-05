@@ -38,7 +38,7 @@ class LoadFileView extends StatefulWidget {
 
 class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
   late final Size signSize;
-  final bannerAdSize = AppBannerAdSize.normal;
+  final AppBannerAdSize bannerAdSize = AppBannerAdSize.normal;
   final interstitalWidgetKey = GlobalKey<AppAdsInterstitialState>();
 
   @override
@@ -49,19 +49,27 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
   @override
   Future<void> onInitAsync() async {
     AppInitializer.removeSplash();
-    context.read<LoadFileViewModel>().setInterstitalWidgetKey(interstitalWidgetKey);
+    context
+        .read<LoadFileViewModel>()
+        .setInterstitalWidgetKey(interstitalWidgetKey);
     await context.read<LoadFileViewModel>().askStoragePermissionIfNeeded();
     return super.onInitAsync();
   }
 
-  bool isPermissionDenied(LoadFileViewDataHolder uiState) => uiState.appStoragePermissionStatus == AppStoragePermissionStatus.requestedAndDenied;
+  bool isPermissionDenied(LoadFileViewDataHolder uiState) =>
+      uiState.appStoragePermissionStatus ==
+      AppStoragePermissionStatus.requestedAndDenied;
 
-  Future<void> showPermissionNeededSnackbar(LoadFileViewDataHolder uiState) async {
+  Future<void> showPermissionNeededSnackbar(
+    LoadFileViewDataHolder uiState,
+  ) async {
     if (isPermissionDenied(uiState)) {
       AppSnackbar.show(
         localizedKey: AppLocalizedKeys.needPermissionForContinue,
         action: () async {
-          await context.read<LoadFileViewModel>().openAppSettingsForPermission();
+          await context
+              .read<LoadFileViewModel>()
+              .openAppSettingsForPermission();
         },
         actionLabel: AppLocalizedKeys.openSettings,
       );
@@ -114,14 +122,16 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
             left: 0,
             right: 0,
             child: AppAdsBanner(
-              adUnitId: getIt<AppEnvManager>().getString(AppEnvKey.adsBannerNormal),
+              adUnitId:
+                  getIt<AppEnvManager>().getString(AppEnvKey.adsBannerNormal),
               adSize: bannerAdSize,
             ),
           ),
           Positioned.fill(
             child: AppAdsInterstitial(
               key: interstitalWidgetKey,
-              adUnitId: getIt<AppEnvManager>().getString(AppEnvKey.adsInterstitial),
+              adUnitId:
+                  getIt<AppEnvManager>().getString(AppEnvKey.adsInterstitial),
             ),
           ),
         ],
@@ -150,7 +160,9 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
   LoadFileLayoutItem pickedFileLayout(BuildContext context) {
     return LoadFileLayoutItem(
       onTap: () async {
-        await showPermissionNeededSnackbar(context.read<LoadFileViewModel>().state);
+        await showPermissionNeededSnackbar(
+          context.read<LoadFileViewModel>().state,
+        );
         if (context.mounted) {
           await context.read<LoadFileViewModel>().onAction(OnPickFile());
         }
@@ -164,13 +176,18 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
     );
   }
 
-  Column pickedFileReadyColumn(BuildContext context, LoadFileViewDataHolder uiState) {
+  Column pickedFileReadyColumn(
+    BuildContext context,
+    LoadFileViewDataHolder uiState,
+  ) {
     return Column(
       children: [
         Expanded(
           child: GestureDetector(
             onTap: () async {
-              await showPermissionNeededSnackbar(context.read<LoadFileViewModel>().state);
+              await showPermissionNeededSnackbar(
+                context.read<LoadFileViewModel>().state,
+              );
               if (context.mounted) {
                 await context.read<LoadFileViewModel>().onAction(OnPickFile());
               }
@@ -187,7 +204,9 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
           child: uiState.signImage != null
               ? TextButton(
                   onPressed: () {
-                    context.read<SignFileViewModel>().setSignableFile(context.read<LoadFileViewModel>().state.pickedFile);
+                    context.read<SignFileViewModel>().setSignableFile(
+                          context.read<LoadFileViewModel>().state.pickedFile,
+                        );
                     getIt<AppNavigator>().navigateTo(RouteEnum.signFileView);
                   },
                   child: Row(
@@ -210,18 +229,27 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
   Widget pickYourSignBuilder(LoadFileViewDataHolder uiState) {
     return BlocListener<CreateSignViewModel, SignDrawingCanvasDataHolder>(
       listener: (context, state) {
-        context.read<LoadFileViewModel>().convertDrawingSignToSignImage(state.lastSavedDrawingSignData);
+        context
+            .read<LoadFileViewModel>()
+            .convertDrawingSignToSignImage(state.lastSavedDrawingSignData);
       },
-      listenWhen: (previous, current) => previous.lastSavedDrawingSignData != current.lastSavedDrawingSignData,
+      listenWhen: (previous, current) =>
+          previous.lastSavedDrawingSignData != current.lastSavedDrawingSignData,
       child: LoadFileLayoutItem(
         onTap: () async {
-          await showPermissionNeededSnackbar(context.read<LoadFileViewModel>().state);
+          await showPermissionNeededSnackbar(
+            context.read<LoadFileViewModel>().state,
+          );
           if (mounted) {
-            await context.read<LoadFileViewModel>().onAction(OnPickSignImage(widgetSize: signSize));
+            await context
+                .read<LoadFileViewModel>()
+                .onAction(OnPickSignImage(widgetSize: signSize));
           }
         },
         backgroundColor: ColorConstant.pickSignBackground,
-        titleKey: uiState.signImage != null ? AppLocalizedKeys.yourSign : AppLocalizedKeys.pickYourSign,
+        titleKey: uiState.signImage != null
+            ? AppLocalizedKeys.yourSign
+            : AppLocalizedKeys.pickYourSign,
         child: AnimatedSwitcher(
           duration: Durations.medium1,
           child: uiState.signImage != null
@@ -238,7 +266,11 @@ class _LoadFileViewState extends BaseStatefullWidget<LoadFileView> {
 }
 
 class SignImageAsset extends StatelessWidget {
-  const SignImageAsset({required this.bytes, required this.globalKey, super.key});
+  const SignImageAsset({
+    required this.bytes,
+    required this.globalKey,
+    super.key,
+  });
 
   final Uint8List bytes;
   final GlobalKey globalKey;
