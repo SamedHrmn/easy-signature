@@ -17,10 +17,11 @@ class PngSaveWidget extends StatefulWidget {
 }
 
 class PngSaveWidgetState extends State<PngSaveWidget> {
-  final repaintKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> repaintKey = GlobalKey();
 
   Future<Uint8List> capturePng({required Size? defaultImageSize}) async {
-    final boundary = repaintKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    final boundary =
+        repaintKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
 
     // Get the actual widget size
     final widgetSize = boundary.size;
@@ -41,7 +42,8 @@ class PngSaveWidgetState extends State<PngSaveWidget> {
   }
 
   Future<ByteData?> capturePngWithWidget() async {
-    final boundary = repaintKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    final boundary =
+        repaintKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
 
     final image = await boundary.toImage();
 
@@ -66,7 +68,8 @@ class PngSaveWidgetState extends State<PngSaveWidget> {
     return scaledImage.toByteData(format: ImageByteFormat.png);
   }
 
-  Size widgetSize() => (repaintKey.currentContext!.findRenderObject()! as RenderBox).size;
+  Size widgetSize() =>
+      (repaintKey.currentContext!.findRenderObject()! as RenderBox).size;
 
   @override
   Widget build(BuildContext context) {

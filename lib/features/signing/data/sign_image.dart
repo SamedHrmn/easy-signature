@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:equatable/equatable.dart';
 
 class SignImage extends Equatable {
-  SignImage({
+  const SignImage({
     required this.bytes,
     required this.widgetSize,
     this.offset = Offset.zero,

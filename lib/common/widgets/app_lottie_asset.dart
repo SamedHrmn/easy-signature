@@ -6,8 +6,8 @@ import 'package:lottie/lottie.dart';
 class AppLottieAsset extends StatelessWidget {
   const AppLottieAsset(
     this.path, {
-    super.key,
     required this.onErrorKey,
+    super.key,
     this.size,
   });
 

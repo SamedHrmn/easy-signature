@@ -14,20 +14,26 @@ class PdfSigningView extends StatefulWidget {
 }
 
 class _PdfSigningViewState extends BaseStatefullWidget<PdfSigningView> {
-  final fileWidgetKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> fileWidgetKey = GlobalKey();
 
   double getPdfCanvasHeight(SignFileViewDataHolder uiState) {
     if (uiState.pickedFile == null) return 0;
 
     if (uiState.pdfDocument == null) {
-      return MediaQuery.sizeOf(context).width * (uiState.pickedFile!.defaultSize!.height / uiState.pickedFile!.defaultSize!.width);
+      return MediaQuery.sizeOf(context).width *
+          (uiState.pickedFile!.defaultSize!.height /
+              uiState.pickedFile!.defaultSize!.width);
     }
-    return MediaQuery.sizeOf(context).width * (uiState.pdfDocument!.pageSize!.height / uiState.pdfDocument!.pageSize!.width);
+    return MediaQuery.sizeOf(context).width *
+        (uiState.pdfDocument!.pageSize!.height /
+            uiState.pdfDocument!.pageSize!.width);
   }
 
   @override
   Future<void> onInitAsync() async {
-    final targetSize = (fileWidgetKey.currentContext!.findAncestorRenderObjectOfType()! as RenderBox).size;
+    final targetSize = (fileWidgetKey.currentContext!
+            .findAncestorRenderObjectOfType()! as RenderBox)
+        .size;
     await context.read<SignFileViewModel>().initFileCanvas(targetSize);
   }
 
